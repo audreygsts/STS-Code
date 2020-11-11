@@ -1,0 +1,133 @@
+---
+title: "sts, baby!"
+author: "Audrey Gunawan"
+date: "11/8/2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+Creating initial vector of genes overexpressed in wild type mice from GSE61373 dataset:
+```{r}
+genes=read.table("genes.tsv",stringsAsFactors = T)
+genes=as.matrix(genes)
+geness=genes[,1]
+genes=vector()
+genes=c(genes, geness)
+genes
+```
+
+Reading in file of miR-30b targets from miRTarBase:
+```{r}
+TB30btargets=read.table("TB mir30b targets.tsv", stringsAsFactors = F)
+TB30btargets=as.data.frame(TB30btargets)
+colnames(TB30btargets)=c("miR-30b","gene")
+TB30btargets
+```
+"TB30targets" is the list of miR-30b target genes from miRTarBase.
+
+Using for loop, search for genes common to both gene list and miR-30b targets:
+```{r}
+commongenesTB30b=vector()
+for (i in 1:length(genes)){
+  if(length(grep(genes[i],TB30btargets[,2], ignore.case = T))> 0){
+    commongenesTB30b= c(commongenesTB30b, genes[i])
+  }
+}
+commongenesTB30b
+```
+"commongenesTB30b" is a vector of genes that are both overexpressed in wild type mice and targets of miR-30b from the miRTarBase database.
+
+Repeating the process with the targets from miR Data Integration Portal (miRDIP):
+```{r}
+DIP30btargets=read.table("DIP mir30b targets.tsv", stringsAsFactors = F)
+DIP30btargets=as.data.frame(DIP30btargets)
+colnames(DIP30btargets)=c("miR-30b","gene")
+DIP30btargets
+```
+
+```{r}
+commongenesDIP30b=vector()
+for (i in 1:length(genes)){
+  if(length(grep(genes[i],DIP30btargets[,2], ignore.case = T))> 0){
+    commongenesDIP30b= c(commongenesDIP30b, genes[i])
+  }
+}
+commongenesDIP30b
+```
+
+Finally, finding genes that are common to both databases AND overexpressed in wild type mice:
+```{r}
+commongenesTB30bdf=cbind("miR-30b", commongenesTB30b)
+commongenesTB30bdf=as.data.frame(commongenesTB30bdf)
+
+commongenes=vector()
+for (i in 1:length(commongenesDIP30b)){
+  if(length(grep(commongenesDIP30b[i],commongenesTB30bdf[,2], ignore.case = T))> 0){
+    commongenes= c(commongenes, commongenesDIP30b[i])
+  }
+}
+commongenes
+```
+
+
+
+
+```{r}
+TB182targets=read.table("TB mir182 targets.tsv", stringsAsFactors = F)
+TB182targets=as.data.frame(TB182targets)
+colnames(TB182targets)=c("miR-182","gene")
+TB182targets
+
+commongenesTB182=vector()
+for (i in 1:1298){
+  if(length(grep(genes[i],TB182targets[,2], ignore.case = T))> 0){
+    commongenesTB182= c(commongenesTB182, genes[i])
+  }
+}
+commongenesTB182
+```
+
+```{r}
+DIP182targets=read.table("DIP mir182 targets.tsv", stringsAsFactors = F)
+DIP182targets=as.data.frame(DIP182targets)
+colnames(DIP182targets)=c("miR-182","gene")
+DIP182targets
+
+commongenesDIP182=vector()
+for (i in 1:1298){
+  if(length(grep(genes[i],DIP182targets[,2], ignore.case = T))> 0){
+    commongenesDIP182= c(commongenesDIP182, genes[i])
+  }
+}
+commongenesDIP182
+```
+
+```{r}
+commongenesTB182df=cbind("miR-182", commongenesTB182)
+commongenesTB182df=as.data.frame(commongenesTB182df)
+```
+
+```{r}
+commongenes2=vector()
+for (i in 1:length(commongenesDIP182)){
+  if(length(grep(commongenesDIP182[i],commongenesTB182df[,2], ignore.case = T))> 0){
+    commongenes2= c(commongenes2, commongenesDIP182[i])
+  }
+}
+commongenes2
+```
+
+
+
+
+
+
